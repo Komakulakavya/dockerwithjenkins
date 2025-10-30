@@ -1,33 +1,43 @@
-pipeline{
+pipeline {
     agent any
-    environment{
-        DOCKERHUB_CREDENTIALS=credentials('dockerhub')
-        IMAGENAME=komakulakavya/flaskd
-        GITREPO=https://github.com/Komakulakavya/dockerwithjenkins.git
-        BRANCH=main
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        IMAGENAME = 'komakulakavya/flaskd'
+        GITREPO = 'https://github.com/Komakulakavya/dockerwithjenkins.git'
+        BRANCH = 'main'
     }
-    stages{
-        stage('checkout'){
-            echo 'cloning to the repo'
-            git branch: "${BRANCH}", url: "${GITREPO}"
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Cloning the repository...'
+                git branch: "${BRANCH}", url: "${GITREPO}"
+            }
         }
-        stage('build image'){
-            echo 'building docker image'
-            bat "docker build -t ${IMAGENAME}"
+
+        stage('Build Image') {
+            steps {
+                echo 'Building Docker image...'
+                bat "docker build -t ${IMAGENAME} ."
+            }
         }
-        stage('push image'){
-            echo 'pushing the image to dockerhub'
-            bat "docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREADENTIALS_PSW}"
-            bat "docker push ${IMAGENAME}"
-        }
-    }
-    post {
-        success{
-            echo 'pipeline executed successfully'
-        }
-        failure{
-            echo 'pipeline failed'
+
+        stage('Push Image') {
+            steps {
+                echo 'Pushing Docker image to Docker Hub...'
+                bat "docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW}"
+                bat "docker push ${IMAGENAME}"
+            }
         }
     }
 
+    post {
+        success {
+            echo '✅ Pipeline executed successfully!'
+        }
+        failure {
+            echo '❌ Pipeline failed.'
+        }
+    }
 }
