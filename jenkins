@@ -2,8 +2,8 @@ pipeline{
     agent any
     environment{
         DOCKERHUB_CREDENTIALS=credentials('dockerhub')
-        IMAGENAME=
-        GITREPO=
+        IMAGENAME=komakulakavya/flaskd
+        GITREPO=https://github.com/Komakulakavya/dockerwithjenkins.git
         BRANCH=main
     }
     stages{
@@ -29,4 +29,5 @@ pipeline{
             echo 'pipeline failed'
         }
     }
+
 }
